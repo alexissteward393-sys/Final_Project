@@ -24,7 +24,7 @@ class Player(pygame.sprite.Sprite):
         self.direction = "left"
         self.animation_count = 0
     
-    def ove(self, dx, dy):
+    def move(self, dx, dy):
         self.rect.x += dx
         self.rect.y += dy
 
