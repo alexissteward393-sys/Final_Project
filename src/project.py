@@ -35,7 +35,7 @@ class Player(pygame.sprite.Sprite):
         self.jump_count = 0
 
     def jump(self):
-        self.y_vel = -self.gravity * 8
+        self.y_vel = -self.gravity * 8  # Remove the quotes
         self.jump_count += 1
         if self.jump_count == 1:
             self.fall_count = 0
@@ -95,9 +95,10 @@ def main(window):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_SPACE and player.jump_count < 2:
-                player.jump()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE and player.jump_count < 2:
+                    player.jump()
+            
 
         player.loop(fps)
         handle_move(player)
@@ -106,6 +107,7 @@ def main(window):
                 player.rect.bottom = ground_rect.top
                 player.y_vel = 0
                 player.fall_count = 0
+                player.jump_count = 0
         draw(window, player)
 
     pygame.quit()
