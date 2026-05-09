@@ -32,6 +32,14 @@ class Player(pygame.sprite.Sprite):
         self.direction = "left"
         self.animation_count = 0
         self.fall_count = 0
+        self.jump_count = 0
+
+    def jump(self):
+        self.y_vel = -self.gravity * 8
+        self.jump_count += 1
+        if self.jump_count == 1:
+            self.fall_count = 0
+
     
     def move(self, dx, dy):
         self.rect.x += dx
@@ -87,7 +95,10 @@ def main(window):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
-        
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE and player.jump_count < 2:
+                player.jump()
+
         player.loop(fps)
         handle_move(player)
         if player.rect.colliderect(ground_rect):
