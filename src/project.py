@@ -78,10 +78,19 @@ class Coin(pygame.sprite.Sprite):
         self.rect.y = y
 
 
-def draw(window, player):
+coin_list = pygame.sprite.Group()
+for i in range(10):
+    coin = Coin(i * 50 + 100, 300)
+    coin_list.add(coin)
+score = 0
+goal = 10
+
+
+def draw(window, player, coin_list):
     window.fill(bg_color) 
     pygame.draw.rect(window, ground_color, ground_rect)
     player.draw(window)
+    coin_list.draw(window)
     pygame.display.update()
 
 
@@ -118,7 +127,7 @@ def main(window):
                 player.y_vel = 0
                 player.fall_count = 0
                 player.jump_count = 0
-        draw(window, player)
+        draw(window, player, coin_list)
 
     pygame.quit()
 
