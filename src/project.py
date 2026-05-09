@@ -11,8 +11,6 @@ pygame.display.set_caption("Platformer")
 bg_color = (255, 255, 255)
 width, height = 1200, 650
 fps = 60
-player_vel = 5
-
 window = pygame.display.set_mode((width, height))
 
 class Player(pygame.sprite.Sprite):
@@ -21,38 +19,30 @@ class Player(pygame.sprite.Sprite):
         self.rect = pygame.Rect(x, y, width, height)
         self.x_vel = 0
         self.y_vel = 0
-        self.mask = None
         self.direction = "left"
 
-    def move(self, dx, dy):
-        self.rect.x += dx
-        self.rect.y += dy
+    def draw(self, win):
+        pygame.draw.rect(win, self.color, self.rect)
 
-    def move_left(self, vel):
-        self.x_vel = -vel
-        if self.direction != "left":
-            self.direction = "left"
-            self.animation_count = 0
-
-    def move_right(self, vel):
-        self.x_vel = vel
-
+def draw(window, player):
+    window.fill(bg_color) 
+    player.draw(window)
+    pygame.display.update()
 
 def main(window):
     clock = pygame.time.Clock()
-
+    player = Player(100, 100, 50, 50)
     run = True
+
     while run:
         clock.tick(fps)
-
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
-                break
+        
+        draw(window, player)
 
     pygame.quit()
-    quit()
-
 
 if __name__ == "__main__":
     main(window)
