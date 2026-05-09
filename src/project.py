@@ -68,6 +68,16 @@ class Player(pygame.sprite.Sprite):
         pygame.draw.rect(win, self.color, self.rect)
 
 
+class Coin(pygame.sprite.Sprite):
+    def __init__(self, x, y):
+        super().__init__()
+        self.image = pygame.Surface((20, 20))
+        self.image.fill((255, 255, 0)) # Yellow
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+
+
 def draw(window, player):
     window.fill(bg_color) 
     pygame.draw.rect(window, ground_color, ground_rect)
