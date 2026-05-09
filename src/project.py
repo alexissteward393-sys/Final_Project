@@ -11,9 +11,14 @@ pygame.display.set_caption("Platformer")
 bg_color = (255, 255, 255)
 width, height = 1200, 650
 fps = 60
+ground_color = (34, 139, 34)
 player_vel = 5
 
 window = pygame.display.set_mode((width, height))
+
+ground_height = 50
+ground_rect = pygame.Rect(0, height - ground_height, width, ground_height)
+
 
 class Player(pygame.sprite.Sprite):
     color = (255, 0, 0)
@@ -50,25 +55,14 @@ class Player(pygame.sprite.Sprite):
 
         self.fall_count += 1
 
+
     def draw(self, win):
         pygame.draw.rect(win, self.color, self.rect)
 
 
-class Object(pygame.sprite.Sprite):
-    def __init__(self, x, y, width, height, name=None):
-        super().__init__()
-        self.rect = pygame.Rect(x, y, width, height)
-        self.image = pygame.Surface((width, height), pygame.SRCALPHA)
-        self.width = width
-        self.height = height
-        self.name = name
-
-    def draw(self, win):
-        win.blit(self.image, (self.rect.x, self.rect.y))
-
-
 def draw(window, player):
     window.fill(bg_color) 
+    pygame.draw.rect(window, ground_color, ground_rect)
     player.draw(window)
     pygame.display.update()
 
@@ -96,6 +90,11 @@ def main(window):
         
         player.loop(fps)
         handle_move(player)
+        if player.rect.colliderect(ground_rect):
+            if player.y_vel > 0:
+                player.rect.bottom = ground_rect.top
+                player.y_vel = 0
+                player.fall_count = 0
         draw(window, player)
 
     pygame.quit()
