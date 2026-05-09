@@ -14,3 +14,10 @@ fps = 60
 player_vel = 5
 
 window = pygame.display.set_mode((width, height))
+
+def main(window):
+    pass
+
+
+if __name__ == "__main__":
+    main(window)
