@@ -13,12 +13,9 @@ width, height = 1200, 650
 fps = 60
 ground_color = (34, 139, 34)
 player_vel = 5
-
 window = pygame.display.set_mode((width, height))
-
 ground_height = 50
-ground_rect = pygame.Rect(0, height - ground_height, width, ground_height)
-
+ground_rect = pygame.Rect(0, height - ground_height, width * 2, ground_height)
 font = pygame.font.SysFont("Arial", 30)
 
 
