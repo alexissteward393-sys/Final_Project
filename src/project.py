@@ -20,6 +20,7 @@ class Player(pygame.sprite.Sprite):
     gravity = 1
 
     def __init__(self, x, y, width, height):
+        super().__init__()
         self.rect = pygame.Rect(x, y, width, height)
         self.x_vel = 0
         self.y_vel = 0
@@ -52,10 +53,25 @@ class Player(pygame.sprite.Sprite):
     def draw(self, win):
         pygame.draw.rect(win, self.color, self.rect)
 
+
+class Object(pygame.sprite.Sprite):
+    def __init__(self, x, y, width, height, name=None):
+        super().__init__()
+        self.rect = pygame.Rect(x, y, width, height)
+        self.image = pygame.Surface((width, height), pygame.SRCALPHA)
+        self.width = width
+        self.height = height
+        self.name = name
+
+    def draw(self, win):
+        win.blit(self.image, (self.rect.x, self.rect.y))
+
+
 def draw(window, player):
     window.fill(bg_color) 
     player.draw(window)
     pygame.display.update()
+
 
 def handle_move(player):
     keys = pygame.key.get_pressed()
@@ -65,6 +81,7 @@ def handle_move(player):
         player.move_left(player_vel)
     if keys[pygame.K_d]:
         player.move_right(player_vel)
+
 
 def main(window):
     clock = pygame.time.Clock()
@@ -82,6 +99,7 @@ def main(window):
         draw(window, player)
 
     pygame.quit()
+
 
 if __name__ == "__main__":
     main(window)
