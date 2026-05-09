@@ -19,6 +19,8 @@ window = pygame.display.set_mode((width, height))
 ground_height = 50
 ground_rect = pygame.Rect(0, height - ground_height, width, ground_height)
 
+font = pygame.font.SysFont("Arial", 30)
+
 
 class Player(pygame.sprite.Sprite):
     color = (255, 0, 0)
@@ -72,25 +74,28 @@ class Coin(pygame.sprite.Sprite):
     def __init__(self, x, y):
         super().__init__()
         self.image = pygame.Surface((20, 20))
-        self.image.fill((255, 255, 0)) # Yellow
+        self.image.fill((255, 255, 0))
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
-
+        self.hit = False
 
 coin_list = pygame.sprite.Group()
 for i in range(10):
-    coin = Coin(i * 50 + 100, 300)
+    coin = Coin(i * 50 + 100, 550)
     coin_list.add(coin)
+
 score = 0
 goal = 10
 
 
-def draw(window, player, coin_list):
+def draw(window, player, coin_list, score):
     window.fill(bg_color) 
     pygame.draw.rect(window, ground_color, ground_rect)
     player.draw(window)
     coin_list.draw(window)
+    score_text = font.render(f"Score: {score}", True, (0, 0, 0))
+    window.blit(score_text, (10, 10))
     pygame.display.update()
 
 
@@ -105,6 +110,7 @@ def handle_move(player):
 
 
 def main(window):
+    global score
     clock = pygame.time.Clock()
     player = Player(100, 100, 50, 50)
     run = True
@@ -127,7 +133,11 @@ def main(window):
                 player.y_vel = 0
                 player.fall_count = 0
                 player.jump_count = 0
-        draw(window, player, coin_list)
+        hits = pygame.sprite.spritecollide(player, coin_list, True)
+        for hit in hits:
+            score += 1
+            print(f"Score: {score}")
+        draw(window, player, coin_list, score)
 
     pygame.quit()
 
