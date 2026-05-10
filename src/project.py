@@ -148,8 +148,7 @@ def main(window):
     clock = pygame.time.Clock()
     player = Player(100, 100, 50, 50)
     block_size = 96
-    blocks = [Block(0, height - block_size, block_size)]
-    
+    floor = [Block(i * block_size, height - block_size, block_size) for i in range(-width // block_size, width * 2 // block_size)]    
     run = True
 
     while run:
@@ -174,7 +173,7 @@ def main(window):
             score += 1
             print(f"Score: {score}")
 
-        draw(window, player, coin_list, score, blocks)
+        draw(window, player, coin_list, score, floor)
 
     pygame.quit()
 
