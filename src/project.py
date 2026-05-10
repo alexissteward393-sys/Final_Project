@@ -8,14 +8,19 @@ pygame.init()
 
 pygame.display.set_caption("Platformer")
 
+game_folder = os.path.dirname(__file__)
+asset_folder = os.path.join(game_folder, 'assets')
 bg_color = (255, 255, 255)
 width, height = 1200, 650
 fps = 60
 ground_color = (34, 139, 34)
 player_vel = 5
+
 window = pygame.display.set_mode((width, height))
+
 ground_height = 50
-ground_rect = pygame.Rect(0, height - ground_height, width * 2, ground_height)
+ground_rect = pygame.Rect(0, height - ground_height, width, ground_height)
+
 font = pygame.font.SysFont("Arial", 30)
 
 
@@ -25,13 +30,16 @@ class Player(pygame.sprite.Sprite):
 
     def __init__(self, x, y, width, height):
         super().__init__()
-        self.rect = pygame.Rect(x, y, width, height)
+        full_image = pygame.image.load(os.path.join(asset_folder, 'player.png')).convert_alpha()
+        self.image = pygame.transform.scale(full_image, (int(width * 2), int(height * 2)))
+        self.rect = self.image.get_rect(topleft=(x, y))
         self.x_vel = 0
-        self.y_vel = 0
+        self.y_vel = 0 
         self.direction = "left"
         self.animation_count = 0
         self.fall_count = 0
         self.jump_count = 0
+        
 
     def jump(self):
         self.y_vel = -self.gravity * 8  # Remove the quotes
@@ -64,7 +72,7 @@ class Player(pygame.sprite.Sprite):
 
 
     def draw(self, win):
-        pygame.draw.rect(win, self.color, self.rect)
+        win.blit(self.image, self.rect)
 
 
 class Coin(pygame.sprite.Sprite):
@@ -130,10 +138,12 @@ def main(window):
                 player.y_vel = 0
                 player.fall_count = 0
                 player.jump_count = 0
+
         hits = pygame.sprite.spritecollide(player, coin_list, True)
         for hit in hits:
             score += 1
             print(f"Score: {score}")
+
         draw(window, player, coin_list, score)
 
     pygame.quit()
