@@ -10,7 +10,7 @@ pygame.display.set_caption("Platformer")
 
 game_folder = os.path.dirname(__file__)
 asset_folder = os.path.join(game_folder, 'assets')
-bg_color = (255, 255, 255)
+bg_color = (0, 150, 200)
 width, height = 1200, 650
 fps = 60
 ground_color = (34, 139, 34)
@@ -19,6 +19,8 @@ player_vel = 5
 window = pygame.display.set_mode((width, height))
 
 ground_height = 50
+bg_image = pygame.image.load(os.path.join(asset_folder, 'background.png')).convert()
+bg_image = pygame.transform.scale(bg_image, (width, height))
 ground_rect = pygame.Rect(0, height - ground_height, width, ground_height)
 
 font = pygame.font.SysFont("Arial", 30)
@@ -95,7 +97,7 @@ goal = 10
 
 
 def draw(window, player, coin_list, score):
-    window.fill(bg_color) 
+    window.blit(bg_image, (0, 0))
     pygame.draw.rect(window, ground_color, ground_rect)
     player.draw(window)
     coin_list.draw(window)
