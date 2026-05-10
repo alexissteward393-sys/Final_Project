@@ -13,16 +13,10 @@ asset_folder = os.path.join(game_folder, 'assets')
 bg_color = (0, 150, 200)
 width, height = 1200, 650
 fps = 60
-ground_color = (34, 139, 34)
 player_vel = 5
-
 window = pygame.display.set_mode((width, height))
-
-ground_height = 50
 bg_image = pygame.image.load(os.path.join(asset_folder, 'background.png')).convert()
 bg_image = pygame.transform.scale(bg_image, (width, height))
-ground_rect = pygame.Rect(0, height - ground_height, width, ground_height)
-
 font = pygame.font.SysFont("Arial", 30)
 
 
@@ -77,6 +71,19 @@ class Player(pygame.sprite.Sprite):
         win.blit(self.image, self.rect)
 
 
+class Object(pygame.sprite.Sprite):
+    def __init__(self, x, y, width, height, name=None):
+        super().__init__()
+        self.rect = pygame.Rect(x, y, width, height)
+        self.image = pygame.Surface((width, height), pygame.SRCALPHA)
+        self.width = width
+        self.height = height
+        self.name = name
+
+    def draw(self, win):
+        win.blit(self.image, (self.rect.x, self.rect.y))
+
+
 class Coin(pygame.sprite.Sprite):
     def __init__(self, x, y):
         super().__init__()
@@ -98,7 +105,6 @@ goal = 10
 
 def draw(window, player, coin_list, score):
     window.blit(bg_image, (0, 0))
-    pygame.draw.rect(window, ground_color, ground_rect)
     player.draw(window)
     coin_list.draw(window)
     score_text = font.render(f"Score: {score}", True, (0, 0, 0))
@@ -134,12 +140,10 @@ def main(window):
 
         player.loop(fps)
         handle_move(player)
-        if player.rect.colliderect(ground_rect):
-            if player.y_vel > 0:
-                player.rect.bottom = ground_rect.top
-                player.y_vel = 0
-                player.fall_count = 0
-                player.jump_count = 0
+        if player.y_vel > 0:
+            player.y_vel = 0
+            player.fall_count = 0
+            player.jump_count = 0
 
         hits = pygame.sprite.spritecollide(player, coin_list, True)
         for hit in hits:
