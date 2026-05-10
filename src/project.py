@@ -20,6 +20,15 @@ bg_image = pygame.transform.scale(bg_image, (width, height))
 font = pygame.font.SysFont("Arial", 30)
 
 
+def get_block(size):
+    path = join("assets", "terrain.png")
+    image = pygame.image.load(path).convert_alpha()
+    surface = pygame.Surface((size, size), pygame.SRCALPHA, 32)
+    rect = pygame.Rect(96, 0, size, size)
+    surface.blit(image, (0, 0), rect)
+    return pygame.transform.scale2x(surface)
+
+
 class Player(pygame.sprite.Sprite):
     color = (255, 0, 0)
     gravity = 1
@@ -84,6 +93,14 @@ class Object(pygame.sprite.Sprite):
         win.blit(self.image, (self.rect.x, self.rect.y))
 
 
+class Block(Object):
+    def __init__(self, x, y, size):
+        super().__init__(x, y, size, size)
+        block = get_block(size)
+        self.image.blit(block, (0, 0))
+        self.mask = pygame.mask.from_surface(self.image)
+        
+
 class Coin(pygame.sprite.Sprite):
     def __init__(self, x, y):
         super().__init__()
@@ -103,12 +120,16 @@ score = 0
 goal = 10
 
 
-def draw(window, player, coin_list, score):
+def draw(window, player, coin_list, score, objects):
     window.blit(bg_image, (0, 0))
     player.draw(window)
     coin_list.draw(window)
     score_text = font.render(f"Score: {score}", True, (0, 0, 0))
     window.blit(score_text, (10, 10))
+    
+    for obj in objects:
+        obj.draw(window)
+
     pygame.display.update()
 
 
@@ -126,6 +147,9 @@ def main(window):
     global score
     clock = pygame.time.Clock()
     player = Player(100, 100, 50, 50)
+    block_size = 96
+    blocks = [Block(0, height - block_size, block_size)]
+    
     run = True
 
     while run:
@@ -150,7 +174,7 @@ def main(window):
             score += 1
             print(f"Score: {score}")
 
-        draw(window, player, coin_list, score)
+        draw(window, player, coin_list, score, blocks)
 
     pygame.quit()
 
