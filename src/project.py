@@ -74,6 +74,18 @@ class Player(pygame.sprite.Sprite):
         self.move(self.x_vel, self.y_vel)
 
         self.fall_count += 1
+    
+
+    def landed(self):
+        self.fall_count = 0
+        self.y_vel = 0
+        self.jump_count = 0
+
+    
+    def hit_head(self):
+        self.count = 0
+        self.y_vel += -1
+
 
 
     def draw(self, win):
@@ -133,7 +145,21 @@ def draw(window, player, coin_list, score, objects):
     pygame.display.update()
 
 
-def handle_move(player):
+def handle_vertical_collision(player, objects, dy):
+    collided_objects = []
+    for obj in objects:
+        if pygame.sprite.collide_mask(player, obj):
+            if dy > 0:
+                player.rect.bottom = obj.rect.top
+                player.landed()
+            elif dy < 0:
+                player.rect.top = obj.rect.bottom
+                player.hit_head()
+        collided_objects.append(obj)
+    return collided_objects
+
+
+def handle_move(player, objects):
     keys = pygame.key.get_pressed()
 
     player.x_vel = 0
@@ -141,6 +167,7 @@ def handle_move(player):
         player.move_left(player_vel)
     if keys[pygame.K_d]:
         player.move_right(player_vel)
+    handle_vertical_collision(player, objects, player.y_vel)
 
 
 def main(window):
@@ -162,11 +189,7 @@ def main(window):
             
 
         player.loop(fps)
-        handle_move(player)
-        if player.y_vel > 0:
-            player.y_vel = 0
-            player.fall_count = 0
-            player.jump_count = 0
+        handle_move(player, floor)
 
         hits = pygame.sprite.spritecollide(player, coin_list, True)
         for hit in hits:
