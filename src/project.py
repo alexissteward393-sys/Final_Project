@@ -280,8 +280,10 @@ def main(window):
         for enemy in enemies:
             enemy.update(objects)
         if pygame.sprite.spritecollide(player, enemies, False, pygame.sprite.collide_mask):
-            print("You touched an enemy! Game Over.")
-            run = False
+            player = Player(100, height - block_size * 2, 50, 50)
+            objects, flower_list, enemies = setup_level(LEVEL_MAP, block_size)
+            offset_x = 0
+            continue
         
         hits = pygame.sprite.spritecollide(player, flower_list, True)
         for hit in hits:
