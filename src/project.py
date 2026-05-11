@@ -16,7 +16,7 @@ fps = 60
 player_vel = 4
 window = pygame.display.set_mode((width, height))
 bg_image = pygame.image.load(os.path.join(asset_folder, 'background.png')).convert()
-bg_image = pygame.transform.scale(bg_image, (width, height))
+bg_image = pygame.transform.scale(bg_image, (1300, 590)) 
 font = pygame.font.SysFont("Arial", 30)
 
 
