@@ -88,7 +88,7 @@ class Player(pygame.sprite.Sprite):
 
 
 
-    def draw(self, win):
+    def draw(self, win, offset_x):
         win.blit(self.image, self.rect)
 
 
@@ -101,8 +101,8 @@ class Object(pygame.sprite.Sprite):
         self.height = height
         self.name = name
 
-    def draw(self, win):
-        win.blit(self.image, (self.rect.x, self.rect.y))
+    def draw(self, win, offset_x):
+        win.blit(self.image, (self.rect.x - offset_x, self.rect.y))
 
 
 class Block(Object):
@@ -132,15 +132,15 @@ score = 0
 goal = 10
 
 
-def draw(window, player, coin_list, score, objects):
+def draw(window, player, coin_list, score, objects, offset_x):
     window.blit(bg_image, (0, 0))
-    player.draw(window)
-    coin_list.draw(window)
+    player.draw(window, offset_x)
+    coin_list.draw(window, offset_x)
     score_text = font.render(f"Score: {score}", True, (0, 0, 0))
     window.blit(score_text, (10, 10))
     
     for obj in objects:
-        obj.draw(window)
+        obj.draw(window, offset_x)
 
     pygame.display.update()
 
@@ -175,7 +175,11 @@ def main(window):
     clock = pygame.time.Clock()
     player = Player(100, 100, 50, 50)
     block_size = 96
-    floor = [Block(i * block_size, height - block_size, block_size) for i in range(-width // block_size, width * 2 // block_size)]    
+    floor = [Block(i * block_size, height - block_size, block_size)
+             for i in range(-width // block_size, width * 2 // block_size)] 
+    offset_x = 0
+    scroll_area_width = 200
+   
     run = True
 
     while run:
@@ -196,7 +200,11 @@ def main(window):
             score += 1
             print(f"Score: {score}")
 
-        draw(window, player, coin_list, score, floor)
+        draw(window, player, coin_list, score, floor, offset_x)
+        
+        if ((player.rect.right - offset_x >= width - scroll_area_width) and player.x_vel > 0) or (
+            (player.rect.left - offset_x <= scroll_area_width) and player.x_vel < 0):
+            offset_x += player.x_vel
 
     pygame.quit()
 
