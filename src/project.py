@@ -6,7 +6,7 @@ from os import listdir
 from os.path import isfile, join
 pygame.init()
 
-pygame.display.set_caption("Platformer")
+pygame.display.set_caption("Gloop Glade")
 
 game_folder = os.path.dirname(__file__)
 asset_folder = os.path.join(game_folder, 'assets')
@@ -267,13 +267,13 @@ def setup_level(layout, block_size):
 
 
 LEVEL_MAP = [
-    "B                                                                                   ",
-    "B                           C                                            ",
-    "B               C           B                                     ",
-    "B               B       B       B           C                    ",
-    "B            B             BBB              B                        ",
-    "B      C                               B      E  B            B  B                  ",
-    "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBWWWWWWBBBBBBBBBBB" 
+    "B                                                                                                            C                               ",
+    "B                          C                                                        C                   C   BBB                B    CEB      ",
+    "B               C      C   B   C                                                    B                   B        B          B  BBBBBBBBB     ",
+    "B               B      B       B         C                                            B                            B   C  B                  ",
+    "B            B            BBB            B             C  C  C                     B      B   C               B      BBB                     ",
+    "B      C                             B      EB      B  B  B  B  B   C E  E C  E  B            B    C  E   B E   E C  E  E    E  C            B",
+    "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBWWWWWWWWWWWBBBBBBBBBBBBBBBBBBBWWWWWWWWWBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB" 
 ]
 
 
@@ -327,12 +327,13 @@ def main(window):
                     objects, flower_list, enemies = setup_level(LEVEL_MAP, block_size) 
                     player = Player(100, height - block_size * 2, 50, 50)
                     offset_x = 0
+                    score = 0 
         
         if pygame.sprite.spritecollide(player, enemies, False, pygame.sprite.collide_mask):
             player = Player(100, height - block_size * 2, 50, 50)
             objects, flower_list, enemies = setup_level(LEVEL_MAP, block_size)
             offset_x = 0
-            continue
+            score = 0 
         
         hits = pygame.sprite.spritecollide(player, flower_list, True)
         for hit in hits:
