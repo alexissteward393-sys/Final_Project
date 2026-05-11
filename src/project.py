@@ -36,8 +36,9 @@ class Player(pygame.sprite.Sprite):
     def __init__(self, x, y, width, height):
         super().__init__()
         full_image = pygame.image.load(os.path.join(asset_folder, 'player.png')).convert_alpha()
-        self.image = pygame.transform.scale(full_image, (int(width * 2), int(height * 2)))
+        self.image = pygame.transform.scale(full_image, (int(width * 1.5), int(height * 1.5)))
         self.rect = self.image.get_rect(topleft=(x, y))
+        self.mask = pygame.mask.from_surface(self.image)
         self.x_vel = 0
         self.y_vel = 0 
         self.direction = "left"
@@ -113,11 +114,10 @@ class Block(Object):
         self.mask = pygame.mask.from_surface(self.image)
         
 
-class Coin(pygame.sprite.Sprite):
+class Flowers(pygame.sprite.Sprite):
     def __init__(self, x, y):
         super().__init__()
-        self.image = pygame.Surface((20, 20))
-        self.image.fill((255, 255, 0))
+        self.image = pygame.image.load("flowers.png").convert_alpha()
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
@@ -125,10 +125,10 @@ class Coin(pygame.sprite.Sprite):
     def draw(self, win, offset_x):
         win.blit(self.image, (self.rect.x - offset_x, self.rect.y))
 
-coin_list = pygame.sprite.Group()
+flower_list = pygame.sprite.Group()
 for i in range(10):
-    coin = Coin(i * 50 + 100, 550)
-    coin_list.add(coin)
+    flower = flower(i * 50 + 100, 550)
+    flower_list.add(flower)
 
 score = 0
 goal = 10
@@ -144,10 +144,10 @@ LEVEL_MAP = [
     "BBBBBBBBBBBBBBBBBBBBBBBBBB" 
 ]
 
-def draw(window, player, coin_list, score, objects, offset_x):
+def draw(window, player, flower_list, score, objects, offset_x):
     window.blit(bg_image, (0, 0))
     player.draw(window, offset_x)
-    coin_list.draw(window, offset_x)
+    flower_list.draw(window, offset_x)
     score_text = font.render(f"Score: {score}", True, (0, 0, 0))
     window.blit(score_text, (10, 10))
     
@@ -178,9 +178,8 @@ def collide(player, objects, dx):
     for obj in objects:
         if pygame.sprite.collide_mask(player, obj):
             collided_object = obj
-            break
-
-    player.move(dx, 0)
+            break       
+    player.move(-dx, 0)
     player.update()
     return collided_object
 
@@ -201,7 +200,7 @@ def handle_move(player, objects):
 
 def setup_level(layout, block_size):
     objects = []
-    coins = pygame.sprite.Group()
+    flowers = pygame.sprite.Group()
 
     for row_index, row in enumerate(layout):
         for col_index, cell in enumerate(row):
@@ -211,10 +210,9 @@ def setup_level(layout, block_size):
             if cell == "B":
                 objects.append(Block(x, y, block_size))
             elif cell == "C":
-                # Aligning coin to center of block area
-                coins.add(Coin(x + block_size//4, y + block_size//4))
+                flowers.add(Flowers(x + block_size//4, y + block_size//4))
                 
-    return objects, coins
+    return objects, flowers
 
 
 def main(window):
@@ -222,7 +220,7 @@ def main(window):
     clock = pygame.time.Clock()
     player = Player(100, 100, 50, 50)
     block_size = 96
-    objects, coin_list = setup_level(LEVEL_MAP, block_size)
+    objects, flower_list = setup_level(LEVEL_MAP, block_size)
     player = Player(100, height - block_size * 2, 50, 50)
     offset_x = 0
     scroll_area_width = 200
@@ -240,15 +238,16 @@ def main(window):
                     player.jump()
             
 
-        player.loop(fps)
+        player.loop(fps) 
+        handle_vertical_collision(player, objects, player.y_vel)
         handle_move(player, objects)
-
-        hits = pygame.sprite.spritecollide(player, coin_list, True)
+        
+        hits = pygame.sprite.spritecollide(player, flower_list, True)
         for hit in hits:
             score += 1
             print(f"Score: {score}")
 
-        draw(window, player, coin_list, score, objects, offset_x)
+        draw(window, player, flower_list, score, objects, offset_x)
         
         if ((player.rect.right - offset_x >= width - scroll_area_width) and player.x_vel > 0) or (
             (player.rect.left - offset_x <= scroll_area_width) and player.x_vel < 0):
