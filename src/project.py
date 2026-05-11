@@ -159,13 +159,30 @@ def handle_vertical_collision(player, objects, dy):
     return collided_objects
 
 
+def collide(player, objects, dx):
+    player.move(dx, 0)
+    player.update()
+    collided_object = None
+    for obj in objects:
+        if pygame.sprite.collide_mask(player, obj):
+            collided_object = obj
+            break
+
+    player.move(dx, 0)
+    player.update()
+    return collided_object
+
+
 def handle_move(player, objects):
     keys = pygame.key.get_pressed()
 
     player.x_vel = 0
-    if keys[pygame.K_a]:
+    collide_left = collide(player, objects, -player_vel * 2)
+    collide_right = collide(player, objects, player_vel * 2)
+
+    if keys[pygame.K_a] and not collide_left:
         player.move_left(player_vel)
-    if keys[pygame.K_d]:
+    if keys[pygame.K_d] and not collide_right:
         player.move_right(player_vel)
     handle_vertical_collision(player, objects, player.y_vel)
 
@@ -177,6 +194,7 @@ def main(window):
     block_size = 96
     floor = [Block(i * block_size, height - block_size, block_size)
              for i in range(-width // block_size, width * 2 // block_size)] 
+    objects = [*floor, Block(0, height - block_size * 2, block_size)]
     offset_x = 0
     scroll_area_width = 200
    
@@ -193,14 +211,14 @@ def main(window):
             
 
         player.loop(fps)
-        handle_move(player, floor)
+        handle_move(player, objects)
 
         hits = pygame.sprite.spritecollide(player, coin_list, True)
         for hit in hits:
             score += 1
             print(f"Score: {score}")
 
-        draw(window, player, coin_list, score, floor, offset_x)
+        draw(window, player, coin_list, score, objects, offset_x)
         
         if ((player.rect.right - offset_x >= width - scroll_area_width) and player.x_vel > 0) or (
             (player.rect.left - offset_x <= scroll_area_width) and player.x_vel < 0):
