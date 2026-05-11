@@ -87,18 +87,32 @@ class Player(pygame.sprite.Sprite):
         self.count = 0
         self.y_vel += -1
 
-
+    def reset(self, x, y):
+     self.rect.x = x
+     self.rect.y = y
+     self.y_vel = 0
+     self.x_vel = 0
+     self.jump_count = 0
+     self.fall_count = 0
+     self.hit = False
 
     def draw(self, win, offset_x):
         win.blit(self.image, (self.rect.x - offset_x, self.rect.y))
 
 
-class Water(Object):
+class Water(pygame.sprite.Sprite):
     def __init__(self, x, y, size):
-        super().__init__(x, y, size, size)
+        super().__init__() 
+        self.image = pygame.Surface((size, size))
         self.image.fill((0, 100, 255, 150)) 
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
         self.mask = pygame.mask.from_surface(self.image)
         self.name = "water"
+
+    def draw(self, window, offset_x):
+        pygame.draw.rect(window, (0, 0, 255), self.rect.move(-offset_x, 0))
 
 
 class Enemy(pygame.sprite.Sprite):
@@ -113,15 +127,14 @@ class Enemy(pygame.sprite.Sprite):
         self.vel = 2
 
     def update(self, objects):
-        # Move horizontally
         self.rect.x += self.vel * self.direction
         
-
         for obj in objects:
-            if self.rect.colliderect(obj.rect):
+            if self.rect.colliderect(obj.rect) and not isinstance(obj, Water):
                 self.direction *= -1
                 self.rect.x += self.vel * self.direction
                 break
+
 
     def draw(self, win, offset_x):
         win.blit(self.image, (self.rect.x - offset_x, self.rect.y))
@@ -190,6 +203,7 @@ def handle_vertical_collision(player, objects, dy):
     collided_objects = []
     for obj in objects:
         if pygame.sprite.collide_mask(player, obj):
+            if isinstance(obj, Water): continue
             if dy > 0:
                 player.rect.bottom = obj.rect.top
                 player.landed()
@@ -244,6 +258,8 @@ def setup_level(layout, block_size):
                 flower_y = y + (block_size - 64) 
                 flower = Flowers(x, flower_y)
                 flowers_group.add(flower)
+            elif cell == "W":
+                objects.append(Water(x, y + (block_size // 2), block_size))
     return objects, flowers_group, enemies_group
 
 
@@ -253,8 +269,8 @@ LEVEL_MAP = [
     "B               C           B                                     ",
     "B               B       B       B           C                    ",
     "B            B             BBB              B                        ",
-    "B      C                               B      E  B                                ",
-    "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB" 
+    "B      C                               B      E  B            B  B                  ",
+    "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBWWWWWWBBBBBBBBBBB" 
 ]
 
 
@@ -287,6 +303,16 @@ def main(window):
 
         for enemy in enemies:
             enemy.update(objects)
+
+        water_objects = pygame.sprite.Group()
+        for obj in objects:
+            if isinstance(obj, Water):
+                water_objects.add(obj)
+                if pygame.sprite.spritecollideany(player, water_objects, pygame.sprite.collide_mask):
+                    objects, flower_list, enemies = setup_level(LEVEL_MAP, block_size) 
+                    player = Player(100, height - block_size * 2, 50, 50)
+                    offset_x = 0
+        
         if pygame.sprite.spritecollide(player, enemies, False, pygame.sprite.collide_mask):
             player = Player(100, height - block_size * 2, 50, 50)
             objects, flower_list, enemies = setup_level(LEVEL_MAP, block_size)
