@@ -170,6 +170,7 @@ class Flowers(pygame.sprite.Sprite):
         self.rect.x = x
         self.rect.y = y
         self.hit = False
+
     def draw(self, win, offset_x):
         win.blit(self.image, (self.rect.x - offset_x, self.rect.y))
 
@@ -185,16 +186,18 @@ goal = 20
 def draw(window, player, flower_list, enemies, score, objects, offset_x):
     window.blit(bg_image, (0, 0))
     player.draw(window, offset_x)
+
     for flower in flower_list:
         flower.draw(window, offset_x)
-    score_text = font.render(f"Score: {score}", True, (0, 0, 0))
-    window.blit(score_text, (10, 10))
     
     for obj in objects:
         obj.draw(window, offset_x)
 
     for enemy in enemies:
         enemy.draw(window, offset_x)
+
+    score_text = font.render(f"Flowers: {score}/{goal}", True, (255, 255, 255)) 
+    window.blit(score_text, (15, 15))
 
     pygame.display.update()
 
