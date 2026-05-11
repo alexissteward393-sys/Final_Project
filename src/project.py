@@ -161,17 +161,7 @@ score = 0
 goal = 20
 
 
-LEVEL_MAP = [
-    "B                                                                                   ",
-    "B                         C                                            ",
-    "B             C           B                                     ",
-    "B             B       B       B           C                    ",
-    "B          B             BBB              B                        ",
-    "B      C                            B          B                                ",
-    "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB" 
-]
-
-def draw(window, player, flower_list, score, objects, offset_x):
+def draw(window, player, flower_list, enemies, score, objects, offset_x):
     window.blit(bg_image, (0, 0))
     player.draw(window, offset_x)
     for flower in flower_list:
@@ -181,6 +171,9 @@ def draw(window, player, flower_list, score, objects, offset_x):
     
     for obj in objects:
         obj.draw(window, offset_x)
+
+    for enemy in enemies:
+        enemy.draw(window, offset_x)
 
     pygame.display.update()
 
@@ -229,17 +222,32 @@ def handle_move(player, objects):
 def setup_level(layout, block_size):
     objects = []                
     flowers_group = pygame.sprite.Group()
-    for row_index, row in enumerate(layout):                
-        for col_index, cell in enumerate(row):                
-            x = col_index * block_size                
-            y = row_index * block_size                
-            if cell == "B":                
-                objects.append(Block(x, y, block_size))                
+    enemies_group = pygame.sprite.Group()
+    for row_index, row in enumerate(layout):
+        for col_index, cell in enumerate(row):
+            x = col_index * block_size
+            y = row_index * block_size
+            if cell == "B":
+                objects.append(Block(x, y, block_size))
+            elif cell == "E":
+                enemy = Enemy(x, y + (block_size - 40), 40, 40)
+                enemies_group.add(enemy)                
             elif cell == "C":                
                 flower_y = y + (block_size - 64) 
                 flower = Flowers(x, flower_y)
                 flowers_group.add(flower)
-    return objects, flowers_group
+    return objects, flowers_group, enemies_group
+
+
+LEVEL_MAP = [
+    "B                                                                                   ",
+    "B                         C                                            ",
+    "B             C           B                                     ",
+    "B             B       B       B           C                    ",
+    "B          B             BBB              B                        ",
+    "B      C                            B      E    B                                ",
+    "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB" 
+]
 
 
 def main(window):
@@ -247,7 +255,7 @@ def main(window):
     clock = pygame.time.Clock()
     player = Player(100, 100, 50, 50)
     block_size = 96
-    objects, flower_list = setup_level(LEVEL_MAP, block_size) 
+    objects, flower_list, enemies = setup_level(LEVEL_MAP, block_size)
     player = Player(100, height - block_size * 2, 50, 50)
     offset_x = 0
     scroll_area_width = 200
@@ -268,13 +276,19 @@ def main(window):
         player.loop(fps) 
         handle_vertical_collision(player, objects, player.y_vel)
         handle_move(player, objects)
+
+        for enemy in enemies:
+            enemy.update(objects)
+        if pygame.sprite.spritecollide(player, enemies, False, pygame.sprite.collide_mask):
+            print("You touched an enemy! Game Over.")
+            run = False
         
         hits = pygame.sprite.spritecollide(player, flower_list, True)
         for hit in hits:
             score += 1
             print(f"Score: {score}")
 
-        draw(window, player, flower_list, score, objects, offset_x)
+        draw(window, player, flower_list, enemies, score, objects, offset_x)
         
         if ((player.rect.right - offset_x >= width - scroll_area_width) and player.x_vel > 0) or (
             (player.rect.left - offset_x <= scroll_area_width) and player.x_vel < 0):
