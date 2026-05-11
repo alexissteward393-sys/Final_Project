@@ -93,6 +93,32 @@ class Player(pygame.sprite.Sprite):
         win.blit(self.image, (self.rect.x - offset_x, self.rect.y))
 
 
+class Enemy(pygame.sprite.Sprite):
+    def __init__(self, x, y, width, height):
+        super().__init__()
+        # Replace with your enemy image
+        self.image = pygame.Surface((width, height))
+        self.image.fill((0, 0, 255)) # Blue enemies
+        self.rect = self.image.get_rect(topleft=(x, y))
+        self.mask = pygame.mask.from_surface(self.image)
+        self.direction = 1
+        self.vel = 2
+
+    def update(self, objects):
+        # Move horizontally
+        self.rect.x += self.vel * self.direction
+        
+
+        for obj in objects:
+            if self.rect.colliderect(obj.rect):
+                self.direction *= -1
+                self.rect.x += self.vel * self.direction
+                break
+
+    def draw(self, win, offset_x):
+        win.blit(self.image, (self.rect.x - offset_x, self.rect.y))
+
+
 class Object(pygame.sprite.Sprite):
     def __init__(self, x, y, width, height, name=None):
         super().__init__()
@@ -137,11 +163,11 @@ goal = 20
 
 LEVEL_MAP = [
     "B                                                                                   ",
-    "B                             C                                            ",
-    "B             C               B                                     ",
-    "B             B           B       B                             ",
-    "B          B                 BBB                                    ",
-    "B      C                                                                      ",
+    "B                         C                                            ",
+    "B             C           B                                     ",
+    "B             B       B       B           C                    ",
+    "B          B             BBB              B                        ",
+    "B      C                            B          B                                ",
     "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB" 
 ]
 
