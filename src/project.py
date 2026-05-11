@@ -274,6 +274,15 @@ LEVEL_MAP = [
 ]
 
 
+def draw_text_box(surface, text, font, color, rect_color, x, y):
+    text_obj = font.render(text, True, color)
+    text_rect = text_obj.get_rect()
+    text_rect.topleft = (x + 10, y + 5)
+    box_rect = pygame.Rect(x, y, text_obj.get_width() + 20, text_obj.get_height() + 10)
+    pygame.draw.rect(surface, rect_color, box_rect)
+    surface.blit(text_obj, text_rect)
+
+
 def main(window):
     global score
     clock = pygame.time.Clock()
@@ -283,6 +292,9 @@ def main(window):
     player = Player(100, height - block_size * 2, 50, 50)
     offset_x = 0
     scroll_area_width = 200
+    tutorial_text_timer = 0
+    show_tutorial_text = True 
+    font = pygame.font.SysFont("Arial", 30)
 
    
     run = True
@@ -322,6 +334,7 @@ def main(window):
         hits = pygame.sprite.spritecollide(player, flower_list, True)
         for hit in hits:
             score += 1
+            show_tutorial_text = False 
             print(f"Score: {score}")
 
         draw(window, player, flower_list, enemies, score, objects, offset_x)
@@ -329,6 +342,13 @@ def main(window):
         if ((player.rect.right - offset_x >= width - scroll_area_width) and player.x_vel > 0) or (
             (player.rect.left - offset_x <= scroll_area_width) and player.x_vel < 0):
             offset_x += player.x_vel
+
+        if show_tutorial_text:
+            msg1 = font.render("Use A & D to move, Space to jump", True, (255, 255, 255))
+            msg2 = font.render("Collect flowers", True, (255, 255, 255))
+            window.blit(msg1, (width // 2 - msg1.get_width() // 2, height // 2 - 40))
+            window.blit(msg2, (width // 2 - msg2.get_width() // 2, height // 2))
+        pygame.display.update()
         
 
     pygame.quit()
