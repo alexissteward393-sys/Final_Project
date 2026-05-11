@@ -13,7 +13,7 @@ asset_folder = os.path.join(game_folder, 'assets')
 bg_color = (0, 150, 200)
 width, height = 1200, 650
 fps = 60
-player_vel = 5
+player_vel = 4
 window = pygame.display.set_mode((width, height))
 bg_image = pygame.image.load(os.path.join(asset_folder, 'background.png')).convert()
 bg_image = pygame.transform.scale(bg_image, (width, height))
@@ -90,7 +90,7 @@ class Player(pygame.sprite.Sprite):
 
 
     def draw(self, win, offset_x):
-        win.blit(self.image, self.rect)
+        win.blit(self.image, (self.rect.x - offset_x, self.rect.y))
 
 
 class Object(pygame.sprite.Sprite):
