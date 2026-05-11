@@ -117,8 +117,9 @@ class Block(Object):
 class Flowers(pygame.sprite.Sprite):
     def __init__(self, x, y):
         super().__init__()
-        self.image = pygame.image.load("flowers.png").convert_alpha()
-        self.rect = self.image.get_rect()
+        self.image = pygame.image.load(os.path.join(asset_folder, "flowers.png")).convert_alpha()
+        self.image = pygame.transform.scale(self.image, (64, 64)) 
+        self.rect = self.image.get_rect() # Now rect has the image dimensions
         self.rect.x = x
         self.rect.y = y
         self.hit = False
@@ -200,20 +201,19 @@ def handle_move(player, objects):
 
 
 def setup_level(layout, block_size):
-    objects = []
-    flowers = pygame.sprite.Group()
-
-    for row_index, row in enumerate(layout):
-        for col_index, cell in enumerate(row):
-            x = col_index * block_size
-            y = row_index * block_size
-            
-            if cell == "B":
-                objects.append(Block(x, y, block_size))
-            elif cell == "C":
-                flowers.add(Flowers(x + block_size//4, y + block_size//4))
-                
-    return objects, flowers
+    objects = []                
+    flowers_group = pygame.sprite.Group()
+    for row_index, row in enumerate(layout):                
+        for col_index, cell in enumerate(row):                
+            x = col_index * block_size                
+            y = row_index * block_size                
+            if cell == "B":                
+                objects.append(Block(x, y, block_size))                
+            elif cell == "C":                
+                flower_y = y + (block_size - 64) 
+                flower = Flowers(x, flower_y)
+                flowers_group.add(flower)
+    return objects, flowers_group
 
 
 def main(window):
@@ -221,7 +221,7 @@ def main(window):
     clock = pygame.time.Clock()
     player = Player(100, 100, 50, 50)
     block_size = 96
-    objects, flower_list = setup_level(LEVEL_MAP, block_size)
+    objects, flower_list = setup_level(LEVEL_MAP, block_size) 
     player = Player(100, height - block_size * 2, 50, 50)
     offset_x = 0
     scroll_area_width = 200
