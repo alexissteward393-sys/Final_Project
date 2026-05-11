@@ -18,6 +18,8 @@ window = pygame.display.set_mode((width, height))
 bg_image = pygame.image.load(os.path.join(asset_folder, 'background.png')).convert()
 bg_image = pygame.transform.scale(bg_image, (1300, 590)) 
 font = pygame.font.SysFont("Arial", 30)
+win_image = pygame.image.load(os.path.join(asset_folder, "win_screen.png")).convert_alpha()
+win_image = pygame.transform.scale(win_image, (width, height)) 
 
 
 def get_block(size):
@@ -309,7 +311,16 @@ def main(window):
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE and player.jump_count < 2:
                     player.jump()
+
+        if score >= 20:
+            window.blit(win_image, (0, 0))
+            pygame.display.update()
             
+            # Keep the window open until the player quits
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    run = False
+            continue
 
         player.loop(fps) 
         handle_vertical_collision(player, objects, player.y_vel)
