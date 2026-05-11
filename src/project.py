@@ -21,7 +21,7 @@ font = pygame.font.SysFont("Arial", 30)
 
 
 def get_block(size):
-    path = join("assets", "terrain.png")
+    path = os.path.join(asset_folder, "terrain.png")
     image = pygame.image.load(path).convert_alpha()
     surface = pygame.Surface((size, size), pygame.SRCALPHA, 32)
     rect = pygame.Rect(96, 0, size, size)
@@ -122,6 +122,8 @@ class Coin(pygame.sprite.Sprite):
         self.rect.x = x
         self.rect.y = y
         self.hit = False
+    def draw(self, win, offset_x):
+        win.blit(self.image, (self.rect.x - offset_x, self.rect.y))
 
 coin_list = pygame.sprite.Group()
 for i in range(10):
@@ -131,6 +133,16 @@ for i in range(10):
 score = 0
 goal = 10
 
+
+LEVEL_MAP = [
+    "                            ",
+    "                            ",
+    "  B                         ",
+    "  B   CCCC                  ",
+    "  B   BBBBBBBBBB            ",
+    "                            ",
+    "BBBBBBBBBBBBBBBBBBBBBBBBBB" 
+]
 
 def draw(window, player, coin_list, score, objects, offset_x):
     window.blit(bg_image, (0, 0))
@@ -187,16 +199,34 @@ def handle_move(player, objects):
     handle_vertical_collision(player, objects, player.y_vel)
 
 
+def setup_level(layout, block_size):
+    objects = []
+    coins = pygame.sprite.Group()
+
+    for row_index, row in enumerate(layout):
+        for col_index, cell in enumerate(row):
+            x = col_index * block_size
+            y = row_index * block_size
+            
+            if cell == "B":
+                objects.append(Block(x, y, block_size))
+            elif cell == "C":
+                # Aligning coin to center of block area
+                coins.add(Coin(x + block_size//4, y + block_size//4))
+                
+    return objects, coins
+
+
 def main(window):
     global score
     clock = pygame.time.Clock()
     player = Player(100, 100, 50, 50)
     block_size = 96
-    floor = [Block(i * block_size, height - block_size, block_size)
-             for i in range(-width // block_size, width * 2 // block_size)] 
-    objects = [*floor, Block(0, height - block_size * 2, block_size)]
+    objects, coin_list = setup_level(LEVEL_MAP, block_size)
+    player = Player(100, height - block_size * 2, 50, 50)
     offset_x = 0
     scroll_area_width = 200
+
    
     run = True
 
@@ -223,6 +253,7 @@ def main(window):
         if ((player.rect.right - offset_x >= width - scroll_area_width) and player.x_vel > 0) or (
             (player.rect.left - offset_x <= scroll_area_width) and player.x_vel < 0):
             offset_x += player.x_vel
+        
 
     pygame.quit()
 
