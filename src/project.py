@@ -5,8 +5,6 @@ from os.path import isfile, join
 pygame.init()
 
 pygame.display.set_caption("Gloop Glade")
-with open("requirements", "w") as f:
-    f.write("os, pygame")
 
 game_folder = os.path.dirname(__file__)
 asset_folder = os.path.join(game_folder, 'assets')
