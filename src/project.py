@@ -19,7 +19,7 @@ bg_image = pygame.image.load(os.path.join(asset_folder, 'background.png')).conve
 bg_image = pygame.transform.scale(bg_image, (1300, 590)) 
 font = pygame.font.SysFont("Arial", 30)
 win_image = pygame.image.load(os.path.join(asset_folder, "win_screen.png")).convert_alpha()
-win_image = pygame.transform.scale(win_image, (width, height)) 
+win_image = pygame.transform.scale(win_image, (1300, 700)) 
 
 
 def get_block(size):
@@ -359,7 +359,7 @@ def main(window):
 
         if show_tutorial_text:
             msg1 = font.render("Use A & D to move, Space to jump", True, (255, 255, 255))
-            msg2 = font.render("Collect flowers", True, (255, 255, 255))
+            msg2 = font.render("Collect flowers to a crown", True, (255, 255, 255))
             window.blit(msg1, (width // 2 - msg1.get_width() // 2, height // 2 - 40))
             window.blit(msg2, (width // 2 - msg2.get_width() // 2, height // 2))
         pygame.display.update()
