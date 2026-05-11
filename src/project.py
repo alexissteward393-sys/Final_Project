@@ -118,9 +118,8 @@ class Water(pygame.sprite.Sprite):
 class Enemy(pygame.sprite.Sprite):
     def __init__(self, x, y, width, height):
         super().__init__()
-        # Replace with your enemy image
-        self.image = pygame.Surface((width, height))
-        self.image.fill((0, 0, 255)) # Blue enemies
+        self.image = pygame.image.load(os.path.join(asset_folder, "spider.png")).convert_alpha()
+        self.image = pygame.transform.scale(self.image, (width, height))
         self.rect = self.image.get_rect(topleft=(x, y))
         self.mask = pygame.mask.from_surface(self.image)
         self.direction = 1
@@ -166,7 +165,7 @@ class Flowers(pygame.sprite.Sprite):
         super().__init__()
         self.image = pygame.image.load(os.path.join(asset_folder, "flowers.png")).convert_alpha()
         self.image = pygame.transform.scale(self.image, (64, 64)) 
-        self.rect = self.image.get_rect() # Now rect has the image dimensions
+        self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
         self.hit = False
