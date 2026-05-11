@@ -132,17 +132,17 @@ for i in range(10):
     flower_list.add(flower)
 
 score = 0
-goal = 10
+goal = 20
 
 
 LEVEL_MAP = [
-    "                            ",
-    "                            ",
-    "  B                         ",
-    "  B   CCCC                  ",
-    "  B   BBBBBBBBBB            ",
-    "                            ",
-    "BBBBBBBBBBBBBBBBBBBBBBBBBB" 
+    "B                                                                                   ",
+    "B                             C                                            ",
+    "B             C               B                                     ",
+    "B             B           B       B                             ",
+    "B          B                 BBB                                    ",
+    "B      C                                                                      ",
+    "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB" 
 ]
 
 def draw(window, player, flower_list, score, objects, offset_x):
