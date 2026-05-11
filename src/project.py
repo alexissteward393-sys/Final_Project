@@ -93,6 +93,14 @@ class Player(pygame.sprite.Sprite):
         win.blit(self.image, (self.rect.x - offset_x, self.rect.y))
 
 
+class Water(Object):
+    def __init__(self, x, y, size):
+        super().__init__(x, y, size, size)
+        self.image.fill((0, 100, 255, 150)) 
+        self.mask = pygame.mask.from_surface(self.image)
+        self.name = "water"
+
+
 class Enemy(pygame.sprite.Sprite):
     def __init__(self, x, y, width, height):
         super().__init__()
@@ -241,11 +249,11 @@ def setup_level(layout, block_size):
 
 LEVEL_MAP = [
     "B                                                                                   ",
-    "B                         C                                            ",
-    "B             C           B                                     ",
-    "B             B       B       B           C                    ",
-    "B          B             BBB              B                        ",
-    "B      C                            B      E    B                                ",
+    "B                           C                                            ",
+    "B               C           B                                     ",
+    "B               B       B       B           C                    ",
+    "B            B             BBB              B                        ",
+    "B      C                               B      E  B                                ",
     "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB" 
 ]
 
