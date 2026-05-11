@@ -127,7 +127,7 @@ class Flowers(pygame.sprite.Sprite):
 
 flower_list = pygame.sprite.Group()
 for i in range(10):
-    flower = flower(i * 50 + 100, 550)
+    flower = Flowers(i * 50 + 100, 550)
     flower_list.add(flower)
 
 score = 0
@@ -147,7 +147,8 @@ LEVEL_MAP = [
 def draw(window, player, flower_list, score, objects, offset_x):
     window.blit(bg_image, (0, 0))
     player.draw(window, offset_x)
-    flower_list.draw(window, offset_x)
+    for flower in flower_list:
+        flower.draw(window, offset_x)
     score_text = font.render(f"Score: {score}", True, (0, 0, 0))
     window.blit(score_text, (10, 10))
     
